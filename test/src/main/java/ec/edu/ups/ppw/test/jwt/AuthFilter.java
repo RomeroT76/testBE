@@ -33,6 +33,7 @@ public class AuthFilter implements ContainerRequestFilter, ContainerResponseFilt
 		// TODO Auto-generated method stub)
 		SecurityContext context = requestContext.getSecurityContext();
 		String authHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-	}
+		String v = "sd";
+ 	}
 
 }
