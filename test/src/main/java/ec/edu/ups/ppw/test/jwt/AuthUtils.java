@@ -1,6 +1,8 @@
 package ec.edu.ups.ppw.test.jwt;
 
+import java.security.SecureRandom;
 import java.text.ParseException;
+import java.util.Base64;
 import java.util.Date;
 
 import org.joda.time.DateTime;
@@ -19,8 +21,15 @@ import ec.edu.ups.ppw.test.model.User;
 public final class AuthUtils {
 	
 	private static final JWSHeader JWT_HEADER = new JWSHeader(JWSAlgorithm.HS256);
-	private static final String TOKEN_SECRET = "Clave123";
+	private static final String TOKEN_SECRET = generateSecret();
 	public static final String AUTH_HEADER_KEY = "Authorization";
+	
+	private static String generateSecret() {
+        SecureRandom random = new SecureRandom();
+        byte[] sharedSecret = new byte[32];
+        random.nextBytes(sharedSecret);
+        return Base64.getEncoder().encodeToString(sharedSecret);
+    }
 	
 	public static String getSerializedToken(String authHeader) {
         return authHeader.split(" ")[1];
@@ -41,7 +50,7 @@ public final class AuthUtils {
 	
 	public static Token createToken(String host, User user) throws JOSEException {
 		JWTClaimsSet claim = new JWTClaimsSet.Builder()
-				.subject(Integer.toString(user.getId()))
+				.subject(user.getUserName())
 				.issuer(host)
 				.issueTime(DateTime.now().toDate())
 				.expirationTime(DateTime.now().plusDays(1).toDate())

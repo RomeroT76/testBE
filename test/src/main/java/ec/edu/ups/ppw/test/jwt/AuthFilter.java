@@ -9,8 +9,10 @@ import org.joda.time.DateTime;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
 
+import ec.edu.ups.ppw.test.bussines.UserManagement;
 import ec.edu.ups.ppw.test.enums.Rol;
 import jakarta.annotation.Priority;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
@@ -23,6 +25,9 @@ import jakarta.ws.rs.ext.Provider;
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthFilter implements ContainerRequestFilter, ContainerResponseFilter {
+	
+	@Inject
+	private UserManagement userM;
 
 	// Para resolver los problemas de CORS
 	@Override
@@ -56,7 +61,9 @@ public class AuthFilter implements ContainerRequestFilter, ContainerResponseFilt
 			if(new DateTime(claimSet.getExpirationTime()).isBefore(DateTime.now())) {
 				throw new IOException("Expired token");
 			} else {
-				
+				ec.edu.ups.ppw.test.model.User user = this.userM.getUser(claimSet.getSubject());
+				Authorizer authorizer = new Authorizer(user.getUserName(), user.getRol(), originalContext.isSecure());
+				requestContext.setSecurityContext(authorizer);
 			}
 		}
 	}
@@ -64,11 +71,20 @@ public class AuthFilter implements ContainerRequestFilter, ContainerResponseFilt
 	public static class Authorizer implements SecurityContext {
 
 		String userName;
+		Rol role;
+		
 		// Nos permitira validad que la conexion sea segura
 		boolean isSecure;
 		
 		public Authorizer(String userName, boolean isSecure) {
 			this.userName = userName;
+			this.isSecure = isSecure;
+		}
+
+		public Authorizer(String userName, Rol role, boolean isSecure) {
+			super();
+			this.userName = userName;
+			this.role = role;
 			this.isSecure = isSecure;
 		}
 

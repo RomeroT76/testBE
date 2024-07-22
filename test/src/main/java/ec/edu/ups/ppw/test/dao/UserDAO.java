@@ -11,8 +11,8 @@ public class UserDAO {
 	@PersistenceContext
 	EntityManager em;
 	
-	public User read(int id) {
-		User user = this.em.find(User.class, id);
+	public User read(String userName) {
+		User user = this.em.find(User.class, userName);
 		return user;
 	}
 	
@@ -20,8 +20,8 @@ public class UserDAO {
 		this.em.persist(user);
 	}
 	
-	public void delete(int id) {
-		User user = this.read(id);
+	public void delete(String userName) {
+		User user = this.read(userName);
 		this.em.remove(user);
 	}
 	
