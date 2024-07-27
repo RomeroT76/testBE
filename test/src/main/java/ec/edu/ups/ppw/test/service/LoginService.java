@@ -53,9 +53,16 @@ public class LoginService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{us}")
-	public Response getUSer(@PathParam("us") String userName) {
+	@Path("/{us}/{ps}")
+	public Response getUSer(@PathParam("us") String userName, @PathParam("ps") String password) {
 		User user = this.um.getUser(userName);
-		return Response.ok(user).build();
+		if(user.getPassword().equals(password)) {
+			return Response.ok(user).build();
+		}
+		else {
+			return Response.status(Response.Status.UNAUTHORIZED)
+                    .entity("Credenciales inválidas")
+                    .build();
+		}
 	}
 }

@@ -55,7 +55,7 @@ public final class AuthUtils {
 				.issueTime(DateTime.now().toDate())
 				.expirationTime(DateTime.now().plusDays(1).toDate())
 				.claim("user", user.getUserName())
-				.claim("roles", user.getRol())
+				.claim("role", user.getRol())
 				.build();
 		JWSSigner signer = new MACSigner(TOKEN_SECRET);
 		SignedJWT jwt = new SignedJWT(JWT_HEADER, claim);

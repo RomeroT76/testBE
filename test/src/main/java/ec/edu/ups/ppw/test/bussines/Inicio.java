@@ -23,6 +23,13 @@ public class Inicio {
 		u.setRol(Rol.ADMIN);
 		
 		userD.insert(u);
+		
+		User u1 = new User();
+		u1.setUserName("JorgeM");
+		u1.setRol(Rol.CLIENT);
+		u1.setPassword("asd");
+		
+		userD.insert(u1);
 	}
 
 }
